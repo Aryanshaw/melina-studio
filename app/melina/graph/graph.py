@@ -2,7 +2,7 @@ import uuid
 from typing import Dict, Any, List, Optional, Union
 from pydantic import BaseModel, Field
 
-from ..schema.base_node import BaseNode
+from ..models.node import BaseNode
 from .edges.edge import Edge
 
 class Graph(BaseModel):

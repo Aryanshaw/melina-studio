@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from app.melina.graph.nodes.llm_node import LLMNode
 from typing import Dict, Any
 
-from app.melina.controllers.node_cruds.node_crud import NodeCrud
+from app.melina.services.node_cruds.node_crud import NodeCrud
 
 node_router = APIRouter()
 

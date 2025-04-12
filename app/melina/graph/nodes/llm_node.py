@@ -4,8 +4,8 @@ from pydantic import ConfigDict
 import uuid
 from pydantic import Field
 
-from app.melina.controllers.node_cruds.node_crud import NodeCrud
-from app.melina.schema.base_node import BaseNode
+from app.melina.services.node_cruds.node_crud import NodeCrud
+from app.melina.models.node import BaseNode
 from app.melina.models.llm import LLMConfig
 from langchain.schema.language_model import BaseLanguageModel
 

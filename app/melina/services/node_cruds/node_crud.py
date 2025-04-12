@@ -3,8 +3,8 @@ from app.config.db import MongoDB
 from bson import ObjectId
 from typing import Dict, Any
 
-from app.melina.schema.base_node import BaseNode
-from app.melina.schema.base_node import NodeType
+from app.melina.models.node import BaseNode
+from app.melina.models.node import NodeType
 
 class NodeCrud:
     def __init__(self):
