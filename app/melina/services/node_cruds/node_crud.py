@@ -12,7 +12,10 @@ class NodeCrud:
 
     async def create_node(self, node: BaseNode):
         try:
-            result = await self.node_collection.insert_one(node.model_dump())
+            node_data = node.model_dump()
+            node_data.pop("id", None)  # Remove "_id" if it exists
+
+            result = await self.node_collection.insert_one(node_data)
             return str(result.inserted_id)
         except Exception as e:
             print(f"Error creating node: {e}")

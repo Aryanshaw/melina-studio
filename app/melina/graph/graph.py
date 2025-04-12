@@ -1,19 +1,21 @@
 import uuid
+import json
 from typing import Dict, Any, List, Optional, Union
 from pydantic import BaseModel, Field
 
 from ..models.node import BaseNode
 from .edges.edge import Edge
+from app.melina.services.graph_cruds.graph_crud import GraphCRUD
 
 class Graph(BaseModel):
     """Represents a workflow graph with nodes and edges."""
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str
+    id: str
+    name: Optional[str] = None
     description: Optional[str] = None
-    nodes: List[BaseNode] = Field(default_factory=list)
-    edges: List[Edge] = Field(default_factory=list)
-    state: Dict[str, Any] = Field(default_factory=dict)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    nodes: Optional[List[BaseNode]] = None
+    edges: Optional[List[Edge]] = None
+    state: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = None
     
     def add_node(self, node: BaseNode) -> None:
         """Add a node to the graph."""
@@ -43,32 +45,26 @@ class Graph(BaseModel):
             return await node.process(inputs)
         raise ValueError("Node not found")
     
-    # def remove_node(self, node_id: str) -> bool:
-    #     """Remove a node by its ID."""
-    #     for i, node in enumerate(self.nodes):
-    #         if node.id == node_id:
-    #             self.nodes.pop(i)
-    #             # Also remove any edges connected to this node
-    #             self.edges = [e for e in self.edges 
-    #                          if e.source_id != node_id and e.target_id != node_id]
-    #             return True
-    #     return False
-    
-    # def remove_edge(self, edge_id: str) -> bool:
-    #     """Remove an edge by its ID."""
-    #     for i, edge in enumerate(self.edges):
-    #         if edge.id == edge_id:
-    #             self.edges.pop(i)
-    #             return True
-    #     return False
-    
-    # def to_dict(self) -> Dict[str, Any]:
-    #     """Convert the graph to a dictionary."""
-    #     return {
-    #         "id": self.id,
-    #         "name": self.name,
-    #         "description": self.description,
-    #         "nodes": [node.to_dict() for node in self.nodes],
-    #         "edges": [edge.to_dict() for edge in self.edges],
-    #         "metadata": self.metadata
-    #     }
+    async def execute_graph(self, inputs: dict):
+        """Execute the graph."""
+        try:
+            """get the graph id and graph"""
+            graph_id = self.id
+            graph = await GraphCRUD().get_graph(graph_id)
+
+            """Now that we have the graph, we can execute it"""
+            from app.melina.core.executor import GraphExecutor
+
+            executor = GraphExecutor(graph)
+            result = await executor.aexecute(inputs)
+            
+            """Attempt to parse in case if response is a json string"""
+            try:
+                result = json.loads(result)
+            except:
+                pass
+
+            return result
+        except Exception as e:
+            print(f"Error executing graph: {e}")
+            raise e

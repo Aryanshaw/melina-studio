@@ -4,7 +4,7 @@ from pymongo import DESCENDING, ASCENDING
 import certifi
 from typing import Optional
 
-from config.config import config_load
+from app.config.config import config_load
 
 class MongoDB:
     client: Optional[AsyncIOMotorClient] = None
@@ -12,7 +12,8 @@ class MongoDB:
     
     # Collections
     node_collection = None
-    
+    graph_collection = None
+    edge_collection = None
 
     @classmethod
     async def connect(cls):
@@ -42,6 +43,8 @@ class MongoDB:
 
             # Initialize all collections
             cls.node_collection = cls.database.node_collection
+            cls.graph_collection = cls.database.graph_collection
+            cls.edge_collection = cls.database.edge_collection
             
             # Create indexes
             await cls._create_indexes()

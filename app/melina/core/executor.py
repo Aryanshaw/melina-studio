@@ -27,16 +27,12 @@ class GraphExecutor:
         state_graph = StateGraph(state_type)
 
         # Add nodes to the graph
-        print("Adding nodes to the graph")
         for node in self.graph.nodes:
             # Create a processor function for this node
             node_processor = create_node_processor(node)
-            print(f"Adding node {node.id} to the graph")
-            print(f"Node processor: {node_processor}")
             state_graph.add_node(node.id, node_processor)
 
         # Add edges to the graph
-        print("Adding edges to the graph")
         for edge in self.graph.edges:
             state_graph.add_edge(edge.source_id, edge.target_id)
 
@@ -46,7 +42,6 @@ class GraphExecutor:
         if entry_nodes and len(entry_nodes) > 0:
             state_graph.set_entry_point(entry_nodes[0].id)
 
-        print("Compiling graph")
         return state_graph.compile()
     
     def _find_entry_nodes(self):
@@ -62,10 +57,6 @@ class GraphExecutor:
             return [self.graph.nodes[0]]
             
         return entry_nodes
-
-    async def execute(self, start_input):
-        compiled_graph = await self.build_graph()
-        return compiled_graph.invoke(start_input)
 
     async def aexecute(self, start_input):
         compiled_graph = await self.build_graph()

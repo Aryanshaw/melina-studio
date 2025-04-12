@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field
 
 class Edge(BaseModel):
     """Base class for edges connecting nodes in the graph."""
-    id: str
     source_id: str  # ID of the source node
     target_id: str  # ID of the target node
     label: Optional[str] = None
+    graph_template_id: Optional[str] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:

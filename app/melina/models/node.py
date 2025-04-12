@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import Dict, Any, Optional, List, Union
 from pydantic import BaseModel, Field, ConfigDict
@@ -25,6 +26,11 @@ class BaseNode(BaseModel):
     graph_template_id: Optional[str] = None
     position: Position = Field(default_factory=Position)
     metadata: Dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = None
+
+    def update_timestamp(self):
+        self.updated_at = datetime.now()
     
     async def process(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Process the node with the given inputs.
