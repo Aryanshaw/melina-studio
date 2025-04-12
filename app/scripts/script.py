@@ -19,7 +19,7 @@ async def test_runner():
         max_tokens=1000,
         top_p=1.0,
         frequency_penalty=0.0,
-        api_key="1234"
+        api_key=None
     )
     # result = await llm_node.process({"input": "Hello, world!"})
     # print(result)
