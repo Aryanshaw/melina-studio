@@ -1,6 +1,6 @@
-### Entire Journey Lifecycle of Melina Studio
+## Entire Journey Lifecycle of Melina Studio
 
-## 📅 DAY-1 (12 April):
+### 📅 DAY-1 (12 April):
 It's already 5:08 AM with the Avengers: Endgame portal scene music playing in my ears — what a perfect background score for wrapping up Day 1 of Melina Studio.
 Today, we completed the most basic MVP of Melina Studio.
 
