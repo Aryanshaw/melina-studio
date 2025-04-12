@@ -12,6 +12,7 @@ class Graph(BaseModel):
     description: Optional[str] = None
     nodes: List[BaseNode] = Field(default_factory=list)
     edges: List[Edge] = Field(default_factory=list)
+    state: Dict[str, Any] = Field(default_factory=dict)
     metadata: Dict[str, Any] = Field(default_factory=dict)
     
     def add_node(self, node: BaseNode) -> None:
@@ -36,32 +37,38 @@ class Graph(BaseModel):
                 return edge
         return None
     
-    def remove_node(self, node_id: str) -> bool:
-        """Remove a node by its ID."""
-        for i, node in enumerate(self.nodes):
-            if node.id == node_id:
-                self.nodes.pop(i)
-                # Also remove any edges connected to this node
-                self.edges = [e for e in self.edges 
-                             if e.source_id != node_id and e.target_id != node_id]
-                return True
-        return False
+    async def run_node(self, node_id: str, inputs: dict):
+        node = self.get_node(node_id)
+        if node:
+            return await node.process(inputs)
+        raise ValueError("Node not found")
     
-    def remove_edge(self, edge_id: str) -> bool:
-        """Remove an edge by its ID."""
-        for i, edge in enumerate(self.edges):
-            if edge.id == edge_id:
-                self.edges.pop(i)
-                return True
-        return False
+    # def remove_node(self, node_id: str) -> bool:
+    #     """Remove a node by its ID."""
+    #     for i, node in enumerate(self.nodes):
+    #         if node.id == node_id:
+    #             self.nodes.pop(i)
+    #             # Also remove any edges connected to this node
+    #             self.edges = [e for e in self.edges 
+    #                          if e.source_id != node_id and e.target_id != node_id]
+    #             return True
+    #     return False
     
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert the graph to a dictionary."""
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "nodes": [node.to_dict() for node in self.nodes],
-            "edges": [edge.to_dict() for edge in self.edges],
-            "metadata": self.metadata
-        }
+    # def remove_edge(self, edge_id: str) -> bool:
+    #     """Remove an edge by its ID."""
+    #     for i, edge in enumerate(self.edges):
+    #         if edge.id == edge_id:
+    #             self.edges.pop(i)
+    #             return True
+    #     return False
+    
+    # def to_dict(self) -> Dict[str, Any]:
+    #     """Convert the graph to a dictionary."""
+    #     return {
+    #         "id": self.id,
+    #         "name": self.name,
+    #         "description": self.description,
+    #         "nodes": [node.to_dict() for node in self.nodes],
+    #         "edges": [edge.to_dict() for edge in self.edges],
+    #         "metadata": self.metadata
+    #     }

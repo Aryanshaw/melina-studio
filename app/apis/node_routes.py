@@ -30,7 +30,7 @@ async def run_node(
             raise HTTPException(status_code=404, detail="Node not found")
             
         # Run the node
-        result = await node.run_node(inputs)
+        result = await node.process(inputs)
         return JSONResponse(status_code=200, content=result)
     except Exception as e:
         print(f"Error running node: {e}")

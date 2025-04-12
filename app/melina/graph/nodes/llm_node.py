@@ -1,4 +1,5 @@
 import json
+import re
 from typing import Optional, Dict, Any
 from pydantic import ConfigDict
 import uuid
@@ -28,6 +29,7 @@ class LLMNode(BaseNode):
             top_p: float = 1.0, 
             frequency_penalty: float = 0.0,
             api_key: Optional[str] = None,
+            id: Optional[str] = None,
             **kwargs
         ):
         llm_config = LLMConfig(
@@ -45,11 +47,11 @@ class LLMNode(BaseNode):
             description=f"LLM Node using {provider}/{model_name}",
             llm_config=llm_config,
             prompt=prompt,
+            id=id,
             **kwargs
         )
 
         self._llm = None
-        self.id = None
 
     @property
     def llm(self) -> BaseLanguageModel:
@@ -61,14 +63,14 @@ class LLMNode(BaseNode):
     async def save_node(self):
         """Save the node to the database."""
         result = await NodeCrud().create_node(self)
-        self.id = result
-        return self.id
+        # self.id = result  
+        return result
     
     async def update_node(self):
         """Update the node in the database."""
         await NodeCrud().update_node(self.id, self)
 
-    async def run_node(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    async def process(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Run the node with the given inputs."""
         try:
             # Format the prompt with input values
@@ -86,11 +88,13 @@ class LLMNode(BaseNode):
             # Invoke the LLM
             response = await self.llm.ainvoke(formatted_prompt)
 
+            llm_result = response.content.strip()
+            llm_result = re.sub(r'```json|```', '', llm_result).strip()
             try:
-                ai_response = json.loads(response.content.strip())
+                ai_response = json.loads(llm_result)
             except json.JSONDecodeError:
-                print(f"Error parsing JSON response: {response.content}")
-                ai_response = response.content.strip()
+                print(f"Error parsing JSON response: {llm_result}")
+                ai_response = llm_result
                 
             return {
                 "output": ai_response,

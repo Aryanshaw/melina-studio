@@ -18,6 +18,7 @@ class BaseNode(BaseModel):
     """Base class for all node types in the graph."""
     model_config = ConfigDict(extra="allow")
     
+    id: Optional[str] = None
     name: str 
     type: NodeType
     description: Optional[str] = None
@@ -25,7 +26,7 @@ class BaseNode(BaseModel):
     position: Position = Field(default_factory=Position)
     metadata: Dict[str, Any] = Field(default_factory=dict)
     
-    def process(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    async def process(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Process the node with the given inputs.
         
         This method should be implemented by subclasses.

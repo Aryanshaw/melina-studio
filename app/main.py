@@ -5,13 +5,16 @@ from contextlib import asynccontextmanager
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import __init__ as project_root
+
 from .config.db import MongoDB
 from apis.node_routes import node_router
+from scripts.script import test_runner
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await MongoDB.connect()
     init_routes()
+    # await test_runner()
     yield
     await MongoDB.close()
 
