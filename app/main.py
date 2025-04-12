@@ -17,4 +17,4 @@ def init_routes():
     print("Initializing routes")
 
 if __name__ == "main":
-    project_root
+    project_root.init()
